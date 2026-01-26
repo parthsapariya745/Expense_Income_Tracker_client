@@ -2,17 +2,17 @@ import { LayoutDashboard, TrendingUp, TrendingDown, User } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', page: '/Dashboard' },
-  { icon: TrendingUp, label: 'Income', page: '/Income' },
-  { icon: TrendingDown, label: 'Expense', page: '/Expense' },
-  { icon: User, label: 'Profile', page: '/Profile' },
+  { icon: LayoutDashboard, label: 'Dashboard', page: '/user/dashboard' },
+  { icon: TrendingUp, label: 'Income', page: '/user/income' },
+  { icon: TrendingDown, label: 'Expense', page: '/user/expense' },
+  { icon: User, label: 'Profile', page: '/user/profile' },
 ];
 
 export default function BottomNav() {
   const location = useLocation();
   
   const isActive = (page) => {
-    return location.pathname.includes(page) || (page === 'Dashboard' && location.pathname === '/');
+    return location.pathname.includes(page) || (page === '/user/dashboard' && location.pathname === '/');
   };
 
   return (
