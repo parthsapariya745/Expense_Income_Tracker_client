@@ -27,7 +27,7 @@ const AppContent = () => {
   const isUserPage = location.pathname.startsWith("/user");
 
   useEffect(() => {
-    if (!isUserAuth) {
+    if (isUserAuth) {
       dispatch(getUserData())
     }
   }, [dispatch, isUserAuth])
