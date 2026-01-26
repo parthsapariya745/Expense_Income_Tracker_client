@@ -98,6 +98,20 @@ export default function Expense() {
           </button>
         </div>
 
+        {/* Mobile & Tablet Form (Collapsible) */}
+        {showForm && (
+          <div className="lg:hidden block mb-6 animate-in slide-in-from-top-4 duration-300">
+            <ExpenseForm
+              key={editExpense?._id || "new"}
+              onClose={() => {
+                setShowForm(false)
+                setEditExpense(null)
+              }}
+              editData={editExpense}
+            />
+          </div>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <div className="rounded-xl bg-slate-900/50 border border-slate-800/50 p-4">
@@ -152,7 +166,7 @@ export default function Expense() {
 
         {/* Desktop Form (Collapsible) */}
         {showForm && (
-          <div className="hidden sm:block mb-6 animate-in slide-in-from-top-4 duration-300">
+          <div className="hidden lg:block mb-6 animate-in slide-in-from-top-4 duration-300">
             <ExpenseForm
               key={editExpense?._id || "new"}
               onClose={() => {
