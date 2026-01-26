@@ -267,8 +267,6 @@ export default function IncomeForm({ onClose, editData }) {
 
                 {/* Recurring Type */}
                 {/* {isRecurring && (
-                    console.log(isRecurring),
-                    
                     <div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
                         <label className="text-slate-300 text-sm font-medium">Recurring Type</label>
                         <select
