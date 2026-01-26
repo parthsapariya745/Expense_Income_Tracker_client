@@ -45,7 +45,7 @@ const AppContent = () => {
 
   const handleLogout = () => {
     dispatch(isLogout())
-    navigate("/")
+    navigate("/", { replace: true })
   }
 
   return (

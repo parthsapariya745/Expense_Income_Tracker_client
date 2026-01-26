@@ -298,6 +298,7 @@ const userSlice = createSlice({
 
       // logout
       .addCase(isLogout.pending, (state) => {
+        state.isUserAuth = false
         state.loading = true;
         state.error = null;
         state.message = null
