@@ -28,7 +28,6 @@ export default function Dashboard() {
         ) || 0;
     }, [expenses])
 
-
     const totalBalance = useMemo(() => {
         return totalIncome - totalExpense
     }, [totalExpense, totalIncome])
