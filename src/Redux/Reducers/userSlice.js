@@ -169,7 +169,7 @@ const userSlice = createSlice({
     resetOTPVerified(state) {
       state.otpVerified = false;
     },
-    resetPassword(state) {
+    resetResetPassword(state) {
       state.resetPasswordSuccess = false
     }
   },
@@ -318,5 +318,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, clearMessage, resetForgotPassword, resetOTPVerified } = userSlice.actions;
+export const { logout, clearMessage, resetForgotPassword, resetOTPVerified, resetResetPassword } = userSlice.actions;
 export default userSlice.reducer;

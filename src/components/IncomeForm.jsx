@@ -4,19 +4,14 @@ import { useDispatch } from "react-redux";
 import { addIncome, updateIncome } from "../Redux/Reducers/incomeSlice";
 
 const incomeCategories = [
-    "Salary",
-    "Business",
-    "Freelance",
-    "Investment",
-    "Interest",
-    "Rental",
-    "Other",
+    "Salary", "Business", "Freelance", 
+    "Investment", "Interest", "Rental", "Other",
 ];
 
 const paymentModes = ["Cash", "Bank", "UPI", "Card", "Other"];
 
 export default function IncomeForm({ onClose, editData }) {
-    const [amount, setAmount] = useState(editData?.amount !== undefined ? String(editData.amount) : "");
+    const [amount, setAmount] = useState(editData?.amount || "");
     const [category, setCategory] = useState(editData?.category || "");
     const [date, setDate] = useState(
         editData?.incomeDate ? editData?.incomeDate.slice(0, 10) : ""
@@ -42,16 +37,14 @@ export default function IncomeForm({ onClose, editData }) {
         if (!amount || !category || !date || !paymentMode) return;
 
         const formData = new FormData()
-        formData.append("amount", Math.round(amount));
-        formData.append("category", category);
-        formData.append("incomeDate", date);
-        formData.append("paymentMode", paymentMode);
-        formData.append("reference", reference);
-        formData.append("description", description);
+        formData.append("amount", Math.round(Number(amount)))
+        formData.append("category", category.toLowerCase())
+        formData.append("incomeDate", date)
+        formData.append("paymentMode", paymentMode)
+        formData.append("reference", reference)
+        formData.append("description", description)
 
-        if (receiptImage) {
-            formData.append("receiptImage", receiptImage)
-        }
+        if (receiptImage instanceof File) formData.append("receiptImage", receiptImage)
 
         if (editData) {
             dispatch(updateIncome({ id: editData._id, incomeData: formData }))
@@ -219,7 +212,7 @@ export default function IncomeForm({ onClose, editData }) {
                     <label
                         htmlFor="receiptImage"
                         className={`border-2 mt-1 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-300 block
-      ${receiptImage
+                            ${receiptImage
                                 ? 'border-emerald-500 bg-emerald-500/10'
                                 : 'border-slate-700/50 hover:border-emerald-500/50 bg-slate-800/20'}`}
                     >

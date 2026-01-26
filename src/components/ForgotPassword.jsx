@@ -6,7 +6,7 @@ import { forgotPassword, resetForgotPassword } from "../Redux/Reducers/userSlice
 const ForgotPassword = () => {
   const [email, setEmail] = useState("")
 
-  const { forgotPasswordSuccess  } = useSelector((state) => state.user);
+  const { forgotPasswordSuccess } = useSelector((state) => state.user);
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -14,7 +14,7 @@ const ForgotPassword = () => {
   const handleForgotPassword = (e) => {
     e.preventDefault()
 
-    if (email !== "") {
+    if (email.trim() !== "") {
       dispatch(forgotPassword({ email }))
     }
   }
@@ -46,6 +46,7 @@ const ForgotPassword = () => {
             </label>
             <input
               type="email"
+              required
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               placeholder="you@example.com"

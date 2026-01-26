@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [email, setEmail] = useState("");
-    const [password, setPassowrd] = useState("");
+    const [password, setPassword] = useState("");
 
     const { isUserAuth } = useSelector((state) => state.user);
 
@@ -20,7 +20,7 @@ const Login = () => {
         }
 
         setEmail("")
-        setPassowrd("")
+        setPassword("")
     }
 
     useEffect(() => {
@@ -49,6 +49,7 @@ const Login = () => {
                         </label>
                         <input
                             type="email"
+                            required
                             onChange={(e) => setEmail(e.target.value)}
                             value={email}
                             placeholder="you@example.com"
@@ -63,7 +64,8 @@ const Login = () => {
                         </label>
                         <input
                             type="password"
-                            onChange={(e) => setPassowrd(e.target.value)}
+                            required
+                            onChange={(e) => setPassword(e.target.value)}
                             value={password}
                             placeholder="••••••••"
                             className="w-full px-4 py-2 bg-[#020617] border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"

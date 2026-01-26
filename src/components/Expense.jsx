@@ -1,5 +1,5 @@
 import { Plus, TrendingDown, Search, Filter, Calendar } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Header from './Header';
 import TransactionCard from './TransactionCard';
 import ExpenseForm from './ExpenseForm';
@@ -10,71 +10,82 @@ export default function Expense() {
   const [showForm, setShowForm] = useState(false);
   const [editExpense, setEditExpense] = useState(null)
   const [searchExpense, setSearchExpense] = useState('');
-  const [expenseData, setExpenseData] = useState([])
 
   const dispatch = useDispatch()
-
   const { expenses } = useSelector((state) => state.expense)
   const { isUserAuth } = useSelector((state) => state.user)
 
   useEffect(() => {
-    if (isUserAuth) {
-      dispatch(getExpense())
-    }
+    if (isUserAuth) dispatch(getExpense())
   }, [isUserAuth, dispatch])
 
-  useEffect(() => {
-    setExpenseData(expenses)
-  }, [expenses])
-
-  const totalAmount = expenses.reduce(
-    (total, expense) => total + Number(expense.amount), 0
-  )
-
-  let highestExpense = expenses[0], lowestExpense = expenses[0]
-
-  expenses.forEach((expense) => {
-    if (expense.amount > highestExpense.amount) {
-      highestExpense = expense
+  const {
+    totalAmount,
+    highestExpense,
+    lowestExpense,
+    monthExpense,
+    monthText,
+    yearCount,
+  } = useMemo(() => {
+    if (!expenses.length) {
+      return {
+        totalAmount: 0,
+        highestExpense: null,
+        lowestExpense: null,
+        monthExpense: 0,
+        monthText: "",
+        yearCount: "",
+      };
     }
-    if (expense.amount < lowestExpense.amount) {
-      lowestExpense = expense
+
+    let total = 0;
+    let high = expenses[0];
+    let low = expenses[0];
+
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+    let monthly = 0;
+
+    for (const exp of expenses) {
+      const amt = Number(exp.amount);
+      total += amt;
+
+      if (amt > Number(high.amount)) high = exp;
+      if (amt < Number(low.amount)) low = exp;
+
+      const d = new Date(exp.expenseDate);
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        monthly += amt;
+      }
     }
-  });
 
-  let realData = new Date()
-  let monthText = realData.toLocaleString("default", { month: "long" })
-  let monthCount = realData.getMonth()
-  let yearCount = realData.getFullYear()
+    return {
+      totalAmount: total,
+      highestExpense: high,
+      lowestExpense: low,
+      monthExpense: monthly,
+      monthText: now.toLocaleString("default", { month: "long" }),
+      yearCount: year,
+    };
+  }, [expenses]);
 
-  let monthExpense = 0
+  const handleSearchExpenseData = () => {
+    if (!searchExpense) return expenses;
 
-  expenses.forEach((expense) => {
-    const expenseDate = new Date(expense.expenseDate)
+    return expenses.filter((exp) =>
+      exp.category.toLowerCase().includes(searchExpense)
+    );
+  };
 
-    if (
-      expenseDate.getMonth() === monthCount &&
-      expenseDate.getFullYear() === yearCount
-    ) {
-      monthExpense += Number(expense.amount)
-    }
-  })
-
-  const handleEdit = (expense) => {
+  const handleEdit = useCallback((expense) => {
     setEditExpense(expense)
     setShowForm(true)
-  }
+  }, [])
 
-  const handleDelete = (id) => {
+  const handleDelete = useCallback((id) => {
     dispatch(deleteExpense(id))
-  }
-
-  const handleSearchExpenseData = (e) => {
-    let inputVal = e.target.value.toLowerCase()
-    setSearchExpense(inputVal)
-
-    setExpenseData(expenses.filter((expense) => expense.category.toLowerCase().includes(inputVal)))
-  }
+  }, [dispatch])
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -144,7 +155,7 @@ export default function Expense() {
               type="text"
               placeholder="Search expenses..."
               value={searchExpense}
-              onChange={handleSearchExpenseData}
+              onChange={(e) => setSearchExpense(e.target.value.toLowerCase())}
               className="pl-10 h-12 bg-slate-900/50 border-slate-800/50 text-white placeholder:text-slate-500 rounded-xl"
             />
           </div>
@@ -180,7 +191,7 @@ export default function Expense() {
 
         {/* Expense List */}
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-5">
-          {expenseData.map((expense) => (
+          {handleSearchExpenseData().map((expense) => (
             <TransactionCard
               key={expense._id}
               type="expense"
@@ -200,7 +211,7 @@ export default function Expense() {
         </div>
 
         {/* Empty State */}
-        {expenseData.length === 0 && (
+        {handleSearchExpenseData().length === 0 && (
           <div className="text-center py-16">
             <div className="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center mx-auto mb-4">
               <TrendingDown className="w-8 h-8 text-rose-400" />
@@ -209,18 +220,6 @@ export default function Expense() {
             <p className="text-slate-400 text-sm mb-6">Start tracking your spending by adding your first expense entry.</p>
           </div>
         )}
-
-        {/* Mobile FAB */}
-        {/* <Sheet>
-          <SheetTrigger asChild>
-            <button className="sm:hidden fixed bottom-20 right-4 w-14 h-14 rounded-2xl bg-linear-to-r from-rose-500 to-pink-500 shadow-lg shadow-rose-500/30 flex items-center justify-center z-40">
-              <Plus className="w-6 h-6 text-white" />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="bottom" className="bg-slate-950 border-slate-800 rounded-t-3xl max-h-[90vh] overflow-y-auto">
-            <ExpenseForm />
-          </SheetContent>
-        </Sheet> */}
       </main>
     </div>
   );

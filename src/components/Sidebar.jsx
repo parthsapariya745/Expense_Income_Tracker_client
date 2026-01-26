@@ -62,7 +62,7 @@ export default function Sidebar({ onLogout }) {
       <div className="p-4 border-t border-slate-800/50">
         <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30">
           <div className="w-10 h-10 rounded-xl bg-linear-to-br from-emerald-400 to-cyan-500 flex items-center justify-center text-white font-semibold text-sm">
-            {user?.firstName[0]}{user?.lastName[0]}
+            {user?.firstName?.[0]}{user?.lastName?.[0]}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-white truncate">{user?.firstName} {user?.lastName}</p>

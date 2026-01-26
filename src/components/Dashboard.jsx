@@ -2,7 +2,7 @@ import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight } from '
 import Header from './Header';
 // import ChartPlaceholder from './ChartPlaceholder';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getExpense } from '../Redux/Reducers/expenseSlice';
 import { getIncome } from '../Redux/Reducers/incomeSlice';
 import TransactionCard from './TransactionCard';
@@ -14,24 +14,31 @@ export default function Dashboard() {
 
     const dispatch = useDispatch()
 
-    const totalIncome = incomes?.reduce(
-        (sum, item) => sum + Number(item.amount),
-        0
-    ) || 0;
+    const totalIncome = useMemo(() => {
+        return incomes?.reduce(
+            (sum, item) => sum + Number(item.amount),
+            0
+        ) || 0;
+    }, [incomes])
 
-    const totalExpense = expenses?.reduce(
-        (sum, item) => sum + Number(item.amount),
-        0
-    ) || 0;
+    const totalExpense = useMemo(() => {
+        return expenses?.reduce(
+            (sum, item) => sum + Number(item.amount),
+            0
+        ) || 0;
+    }, [expenses])
 
-    const totalBalance = totalIncome - totalExpense
+
+    const totalBalance = useMemo(() => {
+        return totalIncome - totalExpense
+    }, [totalExpense, totalIncome])
 
     useEffect(() => {
         dispatch(getIncome())
         dispatch(getExpense())
     }, [dispatch])
-    
-    const balanceData = [
+
+    const balanceData = useMemo(() => ([
         {
             key: "balance",
             title: "Total Balance",
@@ -62,12 +69,14 @@ export default function Dashboard() {
             iconBg: "bg-rose-500/20",
             textColor: "text-rose-400",
         },
-    ];
+    ]), [totalBalance, totalExpense, totalIncome])
 
-    const amountData = [
-        ...incomes.map((i) => ({ ...i, type: "income" })),
-        ...expenses.map((i) => ({ ...i, type: "expense" }))
-    ]
+    const amountData = useMemo(() => {
+        return [
+            ...incomes.map((i) => ({ ...i, type: "income" })),
+            ...expenses.map((i) => ({ ...i, type: "expense" }))
+        ]
+    }, [expenses, incomes])
 
     return (
         <>
@@ -166,26 +175,6 @@ export default function Dashboard() {
                         <p className="text-slate-400 text-sm mb-6">You haven’t added any income or expenses yet. Start by adding your first transaction.</p>
                     </div>
                 )}
-
-                {/* Quick Stats - Mobile */}
-                {/* <div className="grid grid-cols-2 gap-3 mt-4 lg:hidden">
-                    <div className="rounded-xl bg-slate-900/50 border border-slate-800/50 p-4">
-                        <div className="flex items-center gap-2 text-emerald-400 mb-2">
-                            <TrendingUp className="w-4 h-4" />
-                            <span className="text-xs font-medium">This Month</span>
-                        </div>
-                        <p className="text-lg font-bold text-white">+₹ 2,450</p>
-                        <p className="text-xs text-slate-400">Net savings</p>
-                    </div>
-                    <div className="rounded-xl bg-slate-900/50 border border-slate-800/50 p-4">
-                        <div className="flex items-center gap-2 text-violet-400 mb-2">
-                            <TrendingUp className="w-4 h-4" />
-                            <span className="text-xs font-medium">Transactions</span>
-                        </div>
-                        <p className="text-lg font-bold text-white">47</p>
-                        <p className="text-xs text-slate-400">This month</p>
-                    </div>
-                </div> */}
             </main>
         </>
     );

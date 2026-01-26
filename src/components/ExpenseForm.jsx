@@ -1,28 +1,17 @@
 import { IndianRupee, Calendar, Hash, X, Upload, Check } from "lucide-react";
-
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addExpense, updateExpense } from "../Redux/Reducers/expenseSlice";
 
 const expenseCategories = [
-  "Food",
-  "Rent",
-  "Transport",
-  "Shopping",
-  "Bills",
-  "Education",
-  "Medical",
-  "Entertainment",
-  "Travel",
-  "Other",
+  "Food", "Rent", "Transport", "Shopping", "Bills",
+  "Education", "Medical", "Entertainment", "Travel", "Other"
 ];
 
 const paymentModes = ["Cash", "Bank", "UPI", "Card", "Other"];
 
 export default function ExpenseForm({ onClose, editData }) {
-  const [amount, setAmount] = useState(
-    editData?.amount !== undefined ? String(editData.amount) : ""
-  );
+  const [amount, setAmount] = useState(editData?.amount || "");
   const [category, setCategory] = useState(editData?.category || "");
   const [date, setDate] = useState(
     editData?.expenseDate ? editData?.expenseDate.slice(0, 10) : ""
@@ -48,16 +37,14 @@ export default function ExpenseForm({ onClose, editData }) {
     if (!amount || !category || !date || !paymentMode) return
 
     const formData = new FormData()
-    formData.append("amount", Math.round(amount));
-    formData.append("category", category);
-    formData.append("expenseDate", date);
-    formData.append("paymentMode", paymentMode);
-    formData.append("reference", reference);
-    formData.append("description", description);
+    formData.append("amount", Math.round(Number(amount)))
+    formData.append("category", category.toLowerCase())
+    formData.append("expenseDate", date)
+    formData.append("paymentMode", paymentMode)
+    formData.append("reference", reference)
+    formData.append("description", description)
 
-    if (receiptImage) {
-      formData.append("receiptImage", receiptImage)
-    }
+    if (receiptImage instanceof File) formData.append("receiptImage", receiptImage)
 
     if (editData) {
       dispatch(updateExpense({ id: editData._id, expenseData: formData }))
@@ -81,7 +68,7 @@ export default function ExpenseForm({ onClose, editData }) {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white">Add Expense</h2>
+          <h2 className="text-xl font-bold text-white">{editData ? "Edit" : "Add"} Expense</h2>
           <p className="text-sm text-slate-400 mt-0.5">
             Record a new expense entry
           </p>

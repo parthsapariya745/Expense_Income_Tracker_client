@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import { toast, ToastContainer } from "react-toastify";
@@ -22,15 +22,15 @@ const AppContent = () => {
   const dispatch = useDispatch()
 
   const { isUserAuth, authChecked, error, message } = useSelector((state) => state.user)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   const isUserPage = location.pathname.startsWith("/user");
 
   useEffect(() => {
-    if (isUserAuth) {
+    // if (isUserAuth) {
       dispatch(getUserData())
-    }
-  }, [dispatch, isUserAuth])
+    // }
+  }, [dispatch])
 
   useEffect(() => {
     if (message) {
@@ -45,7 +45,7 @@ const AppContent = () => {
 
   const handleLogout = () => {
     dispatch(isLogout())
-    navigate("/", { replace: true })
+    // navigate("/", { replace: true })
   }
 
   return (

@@ -3,6 +3,7 @@ import {
     GraduationCap, Heart, Plane, MoreHorizontal, Calendar,
     CreditCard, ImageIcon, User
 } from 'lucide-react';
+import { memo, useMemo } from 'react';
 
 const categoryIcons = {
     // Income categories
@@ -48,7 +49,7 @@ const categoryColors = {
     other: 'from-slate-400 to-gray-500',
 };
 
-export default function TransactionCard({
+const TransactionCard = ({
     type,
     amount,
     category,
@@ -63,16 +64,24 @@ export default function TransactionCard({
     onEdit,
     onDelete,
     flag = false
-}) {
-    const Icon = categoryIcons[category?.toLowerCase()] || MoreHorizontal;
-    const colorGradient = categoryColors[category?.toLowerCase()] || categoryColors.other;
-    const isIncome = type === 'income';
+}) => {
+    
+    const meta = useMemo(() => {
+        const key = category?.toLowerCase() || "other";
+        return {
+            Icon: categoryIcons[key] || MoreHorizontal,
+            gradient: categoryColors[key] || categoryColors.other,
+            isIncome: type === "income",
+        };
+    }, [category, type]);
+
+    const { Icon, gradient, isIncome } = meta;
 
     return (
         <div className="group rounded-2xl bg-slate-900/50 border border-slate-800/50 p-4 transition-all duration-300 hover:border-slate-700/50 hover:shadow-xl hover:shadow-slate-900/20">
             <div className="flex items-start gap-4">
                 {/* Icon */}
-                <div className={`p-3 rounded-xl bg-linear-to-br ${colorGradient} shadow-lg`}>
+                <div className={`p-3 rounded-xl bg-linear-to-br ${gradient} shadow-lg`}>
                     <Icon className="w-5 h-5 text-white" />
                 </div>
 
@@ -153,3 +162,5 @@ export default function TransactionCard({
         </div>
     );
 }
+
+export default memo(TransactionCard);

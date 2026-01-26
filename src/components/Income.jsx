@@ -1,5 +1,5 @@
 import { Plus, TrendingUp, Search, Filter, Calendar } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Header from './Header';
 import TransactionCard from './TransactionCard';
 import IncomeForm from './IncomeForm';
@@ -10,10 +10,8 @@ export default function Income() {
   const [showForm, setShowForm] = useState(false);
   const [editIncome, setEditIncome] = useState(null)
   const [searchIncome, setSearchIncome] = useState('');
-  const [incomeData, setIncomeData] = useState([])
 
   const dispatch = useDispatch()
-
   const { incomes } = useSelector((state) => state.income)
   const { isUserAuth } = useSelector((state) => state.user)
 
@@ -23,58 +21,73 @@ export default function Income() {
     }
   }, [isUserAuth, dispatch])
 
-  useEffect(() => {
-    setIncomeData(incomes)
-  }, [incomes])
-
-  const totalAmount = incomes.reduce(
-    (total, income) => total + Number(income.amount), 0
-  )
-
-  let highestIncome = incomes[0], lowestIncome = incomes[0]
-
-  incomes.forEach((income) => {
-    if (income.amount > highestIncome.amount) {
-      highestIncome = income
+  const {
+    totalAmount,
+    highestIncome,
+    lowestIncome,
+    monthIncome,
+    monthText,
+    yearCount,
+  } = useMemo(() => {
+    if (!incomes.length) {
+      return {
+        totalAmount: 0,
+        highestIncome: null,
+        lowestIncome: null,
+        monthIncome: 0,
+        monthText: "",
+        yearCount: "",
+      };
     }
-    if (income.amount < lowestIncome.amount) {
-      lowestIncome = income
+
+    let total = 0;
+    let high = incomes[0];
+    let low = incomes[0];
+
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+    let monthly = 0;
+
+    for (const inc of incomes) {
+      const amt = Number(inc.amount);
+      total += amt;
+
+      if (amt > Number(high.amount)) high = inc;
+      if (amt < Number(low.amount)) low = inc;
+
+      const d = new Date(inc.incomeDate);
+      if (d.getMonth() === month && d.getFullYear() === year) {
+        monthly += amt;
+      }
     }
-  })
 
-  let realData = new Date()
-  let monthText = realData.toLocaleString('default', { month: "long" })
-  let monthCount = realData.getMonth()
-  let yearCount = realData.getFullYear()
+    return {
+      totalAmount: total,
+      highestIncome: high,
+      lowestIncome: low,
+      monthIncome: monthly,
+      monthText: now.toLocaleString("default", { month: "long" }),
+      yearCount: year,
+    };
+  }, [incomes]);
 
-  let monthIncome = 0
-
-  incomes.forEach((income) => {
-    const incomeDate = new Date(income.incomeDate)
-
-    if (
-      incomeDate.getMonth() === monthCount &&
-      incomeDate.getFullYear() === yearCount
-    ) {
-      monthIncome += Number(income.amount)
-    }
-  })
-
-  const handleEdit = (income) => {
+  const handleEdit = useCallback((income) => {
     setEditIncome(income)
     setShowForm(true)
-  }
+  }, [])
 
-  const handleDelete = (id) => {
+  const handleDelete = useCallback((id) => {
     dispatch(deleteIncome(id))
-  }
+  }, [dispatch])
 
-  const handleSearchIncomeData = (e) => {
-    let inputVal = e.target.value.toLowerCase()
-    setSearchIncome(inputVal)
+  const handleSearchIncomeData = () => {
+    if (!searchIncome) return incomes;
 
-    setIncomeData(incomes.filter((income) => income.category.toLowerCase().includes(inputVal)))
-  }
+    return incomes.filter((inc) =>
+      inc.category.toLowerCase().includes(searchIncome)
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-950">
@@ -101,7 +114,7 @@ export default function Income() {
         {/* Mobile & Tablet Form (Collapsible) */}
         {showForm && (
           <div className="lg:hidden block mb-6 animate-in slide-in-from-top-4 duration-300">
-            <IncomeForm 
+            <IncomeForm
               key={editIncome?._id || "new"}
               onClose={() => {
                 setShowForm(false)
@@ -144,7 +157,7 @@ export default function Income() {
               type="search"
               placeholder="Search income..."
               value={searchIncome}
-              onChange={handleSearchIncomeData}
+              onChange={(e) => setSearchIncome(e.target.value.toLowerCase())}
               className="pl-10 h-12 bg-slate-900/50 border-slate-800/50 text-white placeholder:text-slate-500 rounded-xl"
             />
           </div>
@@ -167,7 +180,7 @@ export default function Income() {
         {/* Desktop Form (Collapsible) */}
         {showForm && (
           <div className="hidden lg:block mb-6 animate-in slide-in-from-top-4 duration-300">
-            <IncomeForm 
+            <IncomeForm
               key={editIncome?._id || "new"}
               onClose={() => {
                 setShowForm(false)
@@ -177,10 +190,10 @@ export default function Income() {
             />
           </div>
         )}
-  
+
         {/* Income List */}
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-5">
-          {incomeData.map((income) => (
+          {handleSearchIncomeData().map((income) => (
             <TransactionCard
               key={income._id}
               type="income"
@@ -200,7 +213,7 @@ export default function Income() {
         </div>
 
         {/* Empty State */}
-        {incomeData.length === 0 && (
+        {handleSearchIncomeData().length === 0 && (
           <div className="text-center py-16">
             <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-4">
               <TrendingUp className="w-8 h-8 text-emerald-400" />
@@ -209,18 +222,6 @@ export default function Income() {
             <p className="text-slate-400 text-sm mb-6">Start tracking your earnings by adding your first income entry.</p>
           </div>
         )}
-
-        {/* Mobile FAB */}
-        {/* <Sheet>
-          <SheetTrigger asChild>
-            <button className="sm:hidden fixed bottom-20 right-4 w-14 h-14 rounded-2xl bg-linear-to-r from-emerald-500 to-cyan-500 shadow-lg shadow-emerald-500/30 flex items-center justify-center z-40">
-              <Plus className="w-6 h-6 text-white" />
-            </button>
-          </SheetTrigger>
-          <SheetContent side="bottom" className="bg-slate-950 border-slate-800 rounded-t-3xl max-h-[90vh] overflow-y-auto">
-            <IncomeForm />
-          </SheetContent>
-        </Sheet> */}
       </main>
     </div>
   );

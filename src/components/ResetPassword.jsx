@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { resetPassword } from "../Redux/Reducers/userSlice";
+import { resetPassword, resetResetPassword } from "../Redux/Reducers/userSlice";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -31,7 +31,7 @@ const ResetPassword = () => {
   useEffect(() => {
     if (resetPasswordSuccess) {
       navigate("/");
-      dispatch(resetPasswordSuccess())
+      dispatch(resetResetPassword())
     }
   }, [resetPasswordSuccess, navigate, dispatch]);
 
