@@ -1,5 +1,5 @@
 import { Plus, TrendingUp, Search, Filter, Calendar } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Header from './Header';
 import TransactionCard from './TransactionCard';
 import IncomeForm from './IncomeForm';
@@ -14,6 +14,8 @@ export default function Income() {
   const dispatch = useDispatch()
   const { incomes } = useSelector((state) => state.income)
   const { isUserAuth } = useSelector((state) => state.user)
+
+  const formRef = useRef()
 
   useEffect(() => {
     if (isUserAuth) {
@@ -89,6 +91,15 @@ export default function Income() {
     );
   };
 
+  useEffect(() => {
+    if (showForm && window.innerWidth < 1024) {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [showForm])
+
   return (
     <div className="min-h-screen bg-slate-950">
       <Header title="Income" />
@@ -110,20 +121,6 @@ export default function Income() {
             Add Income
           </button>
         </div>
-
-        {/* Mobile & Tablet Form (Collapsible) */}
-        {showForm && (
-          <div className="lg:hidden block mb-6 animate-in slide-in-from-top-4 duration-300">
-            <IncomeForm
-              key={editIncome?._id || "new"}
-              onClose={() => {
-                setShowForm(false)
-                setEditIncome(null)
-              }}
-              editData={editIncome}
-            />
-          </div>
-        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -179,7 +176,7 @@ export default function Income() {
 
         {/* Desktop Form (Collapsible) */}
         {showForm && (
-          <div className="hidden lg:block mb-6 animate-in slide-in-from-top-4 duration-300">
+          <div className="block mb-6 animate-in slide-in-from-top-4 duration-300">
             <IncomeForm
               key={editIncome?._id || "new"}
               onClose={() => {
