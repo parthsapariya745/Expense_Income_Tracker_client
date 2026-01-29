@@ -1,11 +1,12 @@
-import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet } from 'lucide-react';
 import Header from './Header';
-// import ChartPlaceholder from './ChartPlaceholder';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useMemo } from 'react';
 import { getExpense } from '../Redux/Reducers/expenseSlice';
 import { getIncome } from '../Redux/Reducers/incomeSlice';
 import TransactionCard from './TransactionCard';
+import IncomeExpenseLineChart from './IncomeExpenseLineChart';
+import ExpenseCategoryChart from './ExpenseCategoryChart';
 
 export default function Dashboard() {
     const { user } = useSelector((state) => state.user)
@@ -77,6 +78,23 @@ export default function Dashboard() {
         ]
     }, [expenses, incomes])
 
+    const categoryData = useMemo(() => {
+        const map = {}
+
+        expenses.forEach((expense) => {
+            const category = expense.category
+            const amount = Number(expense.amount) || 0
+
+            if (map[category]) {
+                map[category] += amount
+            } else {
+                map[category] = amount
+            }
+        })
+
+        return map
+    }, [expenses])
+
     return (
         <>
             <Header title="Dashboard" />
@@ -104,10 +122,6 @@ export default function Dashboard() {
                                             <div className={`p-2.5 rounded-xl ${balance.iconBg}`}>
                                                 <Icon className={`w-5 h-5 ${balance.textColor}`} />
                                             </div>
-                                            {/* <div className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium ${trendUp ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
-                                                {trendUp ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-                                                {trend}
-                                            </div> */}
                                         </div>
 
                                         {/* Content */}
@@ -126,10 +140,15 @@ export default function Dashboard() {
                 </div>
 
                 {/* Charts Section */}
-                {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                    <ChartPlaceholder type="bar" title="Income vs Expense" />
-                    <ChartPlaceholder type="pie" title="Income & Expense by Category" />
-                </div> */}
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
+                    <IncomeExpenseLineChart
+                        labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]}
+                        incomeData={[5000, 7000, 6000, 8000, 7500, 9000]}
+                        expenseData={[3000, 4000, 3500, 5000, 4800, 6000]}
+                    />
+
+                    <ExpenseCategoryChart categoryData={categoryData} />
+                </div>
 
                 {/* Recent Transactions */}
                 {(incomes.length !== 0 || expenses.length !== 0) && (
