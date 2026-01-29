@@ -38,7 +38,7 @@ export default function IncomeForm({ onClose, editData }) {
 
         const formData = new FormData()
         formData.append("amount", Math.round(Number(amount)))
-        formData.append("category", category.toLowerCase())
+        formData.append("category", category)
         formData.append("incomeDate", date)
         formData.append("paymentMode", paymentMode)
         formData.append("reference", reference)
