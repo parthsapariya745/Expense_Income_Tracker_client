@@ -174,18 +174,20 @@ export default function Income() {
         </div>
 
         {/* Desktop Form (Collapsible) */}
-        {showForm && (
-          <div className="block mb-6 animate-in slide-in-from-top-4 duration-300">
-            <IncomeForm
-              key={editIncome?._id || "new"}
-              onClose={() => {
-                setShowForm(false)
-                setEditIncome(null)
-              }}
-              editData={editIncome}
-            />
-          </div>
-        )}
+        <div ref={formRef}>
+          {showForm && (
+            <div className="block mb-6 animate-in slide-in-from-top-4 duration-300">
+              <IncomeForm
+                key={editIncome?._id || "new"}
+                onClose={() => {
+                  setShowForm(false)
+                  setEditIncome(null)
+                }}
+                editData={editIncome}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Income List */}
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-5">

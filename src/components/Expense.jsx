@@ -172,18 +172,20 @@ export default function Expense() {
         </div>
 
         {/* Desktop Form (Collapsible) */}
-        {showForm && (
-          <div className="block mb-6 animate-in slide-in-from-top-4 duration-300">
-            <ExpenseForm
-              key={editExpense?._id || "new"}
-              onClose={() => {
-                setShowForm(false)
-                setEditExpense(null)
-              }}
-              editData={editExpense}
-            />
-          </div>
-        )}
+        <div ref={formRef}>
+          {showForm && (
+            <div className="block mb-6 animate-in slide-in-from-top-4 duration-300">
+              <ExpenseForm
+                key={editExpense?._id || "new"}
+                onClose={() => {
+                  setShowForm(false)
+                  setEditExpense(null)
+                }}
+                editData={editExpense}
+              />
+            </div>
+          )}
+        </div>
 
         {/* Expense List */}
         <div className="grid sm:grid-cols-2 grid-cols-1 gap-5">
