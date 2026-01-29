@@ -91,13 +91,13 @@ const incomeSlice = createSlice({
         builder
             // addIncome
             .addCase(addIncome.pending, (state) => {
-                state.loading = true;
+                state.loading = true;  
                 state.error = null;
             })
             .addCase(addIncome.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
-                state.incomes.unshift(action.payload.incomeData)
+                state.incomes.push(action.payload.incomeData)
                 state.error = null;
             })
             .addCase(addIncome.rejected, (state, action) => {
