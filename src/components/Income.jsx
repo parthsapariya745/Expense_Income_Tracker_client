@@ -11,11 +11,10 @@ export default function Income() {
   const [editIncome, setEditIncome] = useState(null)
   const [searchIncome, setSearchIncome] = useState('');
 
+  const formRef = useRef()
   const dispatch = useDispatch()
   const { incomes } = useSelector((state) => state.income)
   const { isUserAuth } = useSelector((state) => state.user)
-
-  const formRef = useRef()
 
   useEffect(() => {
     if (isUserAuth) {
@@ -74,6 +73,14 @@ export default function Income() {
     };
   }, [incomes]);
 
+  const handleSearchIncomeData = () => {
+    if (!searchIncome) return incomes;
+
+    return incomes.filter((inc) =>
+      inc.category.toLowerCase().includes(searchIncome)
+    );
+  };
+
   const handleEdit = useCallback((income) => {
     setEditIncome(income)
     setShowForm(true)
@@ -82,14 +89,6 @@ export default function Income() {
   const handleDelete = useCallback((id) => {
     dispatch(deleteIncome(id))
   }, [dispatch])
-
-  const handleSearchIncomeData = () => {
-    if (!searchIncome) return incomes;
-
-    return incomes.filter((inc) =>
-      inc.category.toLowerCase().includes(searchIncome)
-    );
-  };
 
   useEffect(() => {
     if (showForm && window.innerWidth < 1024) {

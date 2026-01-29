@@ -1,5 +1,5 @@
 import { Plus, TrendingDown, Search, Filter, Calendar } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Header from './Header';
 import TransactionCard from './TransactionCard';
 import ExpenseForm from './ExpenseForm';
@@ -11,6 +11,7 @@ export default function Expense() {
   const [editExpense, setEditExpense] = useState(null)
   const [searchExpense, setSearchExpense] = useState('');
 
+  const formRef = useRef()
   const dispatch = useDispatch()
   const { expenses } = useSelector((state) => state.expense)
   const { isUserAuth } = useSelector((state) => state.user)
@@ -87,6 +88,15 @@ export default function Expense() {
     dispatch(deleteExpense(id))
   }, [dispatch])
 
+  useEffect(() => {
+    if (showForm && window.innerWidth < 1024) {
+      formRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, [showForm])
+
   return (
     <div className="min-h-screen bg-slate-950">
       <Header title="Expense" />
@@ -108,20 +118,6 @@ export default function Expense() {
             Add Expense
           </button>
         </div>
-
-        {/* Mobile & Tablet Form (Collapsible) */}
-        {showForm && (
-          <div className="lg:hidden block mb-6 animate-in slide-in-from-top-4 duration-300">
-            <ExpenseForm
-              key={editExpense?._id || "new"}
-              onClose={() => {
-                setShowForm(false)
-                setEditExpense(null)
-              }}
-              editData={editExpense}
-            />
-          </div>
-        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
@@ -177,7 +173,7 @@ export default function Expense() {
 
         {/* Desktop Form (Collapsible) */}
         {showForm && (
-          <div className="hidden lg:block mb-6 animate-in slide-in-from-top-4 duration-300">
+          <div className="block mb-6 animate-in slide-in-from-top-4 duration-300">
             <ExpenseForm
               key={editExpense?._id || "new"}
               onClose={() => {
