@@ -20,10 +20,15 @@ const ExpenseCategoryChart = ({ categoryData }) => {
             backgroundColor: [
               "#6366f1",
               "#22c55e",
+              "#06b6d4",
               "#f97316",
               "#ef4444",
-              "#06b6d4",
-            ],
+              "#a855f7",
+              "#facc15",
+              "#14b8a6",
+              "#ec4899",
+              "#64748b",
+            ]
           },
         ],
       },
