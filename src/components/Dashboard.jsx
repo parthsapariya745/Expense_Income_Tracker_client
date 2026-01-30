@@ -143,8 +143,8 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
                     <IncomeExpenseLineChart
                         labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]}
-                        incomeData={[5000, 7000, 6000, 8000, 7500, 9000]}
-                        expenseData={[3000, 4000, 3500, 5000, 4800, 6000]}
+                        incomeData={[50000, 70000, 50000, 40000, 75000, 90000]}
+                        expenseData={[40000, 50000, 60000, 70000, 48000, 60000]}
                     />
 
                     <ExpenseCategoryChart categoryData={categoryData} />
