@@ -118,8 +118,12 @@ const incomeSlice = createSlice({
             })
             .addCase(getIncome.fulfilled, (state, action) => {
                 state.loading = false;
-                state.incomes = action.payload
                 state.error = null;
+                state.incomes = action.payload
+
+                state.incomes.sort(
+                    (a, b) => new Date(a.incomeDate) - new Date(b.incomeDate)
+                )
             })
             .addCase(getIncome.rejected, (state, action) => {
                 state.loading = false;

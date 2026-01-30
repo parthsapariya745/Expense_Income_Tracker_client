@@ -118,8 +118,12 @@ const expenseSlice = createSlice({
             })
             .addCase(getExpense.fulfilled, (state, action) => {
                 state.loading = false;
-                state.expenses = action.payload
                 state.error = null;
+                state.expenses = action.payload
+
+                state.expenses.sort(
+                    (a, b) => new Date(a.expenseDate) - new Date(b.expenseDate)
+                )
             })
             .addCase(getExpense.rejected, (state, action) => {
                 state.loading = false;
