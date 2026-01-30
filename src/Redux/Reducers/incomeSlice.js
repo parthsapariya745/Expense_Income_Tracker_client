@@ -97,8 +97,13 @@ const incomeSlice = createSlice({
             .addCase(addIncome.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
-                state.incomes.push(action.payload.incomeData)
                 state.error = null;
+
+                state.incomes.push(action.payload.incomeData)
+
+                state.incomes.sort(
+                    (a, b) => new Date(a.incomeDate) - new Date(b.incomeDate)
+                )
             })
             .addCase(addIncome.rejected, (state, action) => {
                 state.loading = false;
@@ -137,6 +142,11 @@ const incomeSlice = createSlice({
                 if (index !== -1) {
                     state.incomes[index] = action.payload
                 }
+
+                state.incomes.sort(
+                    (a, b) => new Date(a.incomeDate) - new Date(b.incomeDate)
+                )
+
                 state.message = "Income updated successfully";
             })
             .addCase(updateIncome.rejected, (state, action) => {

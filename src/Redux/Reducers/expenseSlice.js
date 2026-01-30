@@ -97,8 +97,13 @@ const expenseSlice = createSlice({
             .addCase(addExpense.fulfilled, (state, action) => {
                 state.loading = false;
                 state.message = action.payload.message;
-                state.expenses.push(action.payload.expenseData)
                 state.error = null;
+
+                state.expenses.push(action.payload.expenseData)
+
+                state.expenses.sort(
+                    (a, b) => new Date(a.expenseDate) - new Date(b.expenseDate)
+                )
             })
             .addCase(addExpense.rejected, (state, action) => {
                 state.loading = false;
@@ -137,6 +142,11 @@ const expenseSlice = createSlice({
                 if (index !== -1) {
                     state.expenses[index] = action.payload
                 }
+
+                state.expenses.sort(
+                    (a, b) => new Date(a.expenseDate) - new Date(b.expenseDate)
+                )
+
                 state.message = "Expense updated successfully";
             })
             .addCase(updateExpense.rejected, (state, action) => {
