@@ -17,14 +17,14 @@ const IncomeExpenseLineChart = ({ incomeData, expenseData, labels }) => {
         datasets: [
           {
             label: "Income",
-            data: incomeData,
+            data: Object.values(incomeData),
             borderColor: "#22c55e",
             backgroundColor: "rgba(34,197,94,0.2)",
             tension: 0.4,
           },
           {
             label: "Expense",
-            data: expenseData,
+            data: Object.values(expenseData),
             borderColor: "#ef4444",
             backgroundColor: "rgba(239,68,68,0.2)",
             tension: 0.4,

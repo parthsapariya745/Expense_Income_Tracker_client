@@ -85,15 +85,43 @@ export default function Dashboard() {
             const category = expense.category
             const amount = Number(expense.amount) || 0
 
-            if (map[category]) {
-                map[category] += amount
-            } else {
-                map[category] = amount
-            }
+            map[category] ? map[category] += amount : map[category] = amount
         })
 
         return map
     }, [expenses])
+
+    const currentYear = new Date().getFullYear()
+
+    const incomeChartData = useMemo(() => {
+        const monthlyIncome = Array(12).fill(0)
+
+        incomes.forEach((income) => {
+            const date = new Date(income.incomeDate)
+
+            if (date.getFullYear() === currentYear) {
+                const month = date.getMonth()
+                monthlyIncome[month] += Number(income.amount) || 0
+            }
+        })
+
+        return monthlyIncome
+    }, [incomes, currentYear])
+
+    const expenseChartData = useMemo(() => {
+        const monthlyExpense = Array(12).fill(0)
+
+        expenses.forEach((expense) => {
+            const date = new Date(expense.expenseDate)
+
+            if (date.getFullYear() === currentYear) {
+                const month = date.getMonth()
+                monthlyExpense[month] += Number(expense.amount) || 0
+            }
+        })
+
+        return monthlyExpense
+    }, [expenses, currentYear])
 
     return (
         <>
@@ -142,9 +170,9 @@ export default function Dashboard() {
                 {/* Charts Section */}
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
                     <IncomeExpenseLineChart
-                        labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun"]}
-                        incomeData={[50000, 70000, 50000, 45000, 75000, 80000]}
-                        expenseData={[40000, 50000, 60000, 70000, 48000, 60000]}
+                        labels={["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]}
+                        incomeData={incomeChartData}
+                        expenseData={expenseChartData}
                     />
 
                     <ExpenseCategoryChart categoryData={categoryData} />
