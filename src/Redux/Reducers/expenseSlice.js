@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-// const baseURL = "http://localhost:5000"
-const baseURL = "https://expense-income-tracker-server.onrender.com"
+// const baseURL = "https://expense-income-tracker-server.onrender.com"
+const baseURL = "https://expense-income-tracker-server.vercel.app"
 
 export const addExpense = createAsyncThunk(
     'expense/addExpense',
